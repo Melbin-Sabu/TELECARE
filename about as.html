@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - TELECARE+</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('https://img.freepik.com/premium-photo/medical-healthcare-background-with-polygonal-lines-shapes_87788-2062.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-image: linear-gradient(135deg, rgba(40, 167, 69, 0.85) 0%, rgba(32, 201, 151, 0.85) 100%), 
+                            url('https://img.freepik.com/premium-photo/medical-background-with-hexagons-healthcare-icons_87788-2076.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modern-nav {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .about-content {
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .about-content h2 {
+            color: #28a745;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .about-content p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .team-section {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .team-section h2 {
+            color: #28a745;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .team-member {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            object-fit: cover;
+        }
+
+        .team-member h3 {
+            color: #28a745;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            color: white;
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            background-image: linear-gradient(135deg, rgba(52, 58, 64, 0.95) 0%, rgba(33, 37, 41, 0.95) 100%),
+                            url('https://img.freepik.com/premium-photo/medical-healthcare-background-with-flat-icons-symbols_87788-2098.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .modern-nav {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .about-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>About TELECARE+</h1>
+    </header>
+
+    <nav class="modern-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="feature.html" class="nav-link">Features</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="login.php" class="nav-link">Login</a>
+        <a href="registration.html" class="nav-link">Register</a>
+    </nav>
+
+    <div class="container">
+        <section class="about-section">
+            <div class="about-content">
+                <h2>Our Mission</h2>
+                <p>At TELECARE+, we are dedicated to revolutionizing healthcare delivery through innovative technology solutions. Our mission is to make quality healthcare accessible to everyone, everywhere.</p>
+                <p>We believe in creating a seamless connection between patients and healthcare providers, ensuring that medical care is just a click away.</p>
+            </div>
+            <div class="about-content">
+                <h2>Our Vision</h2>
+                <p>We envision a future where healthcare is proactive, personalized, and accessible to all. Through our platform, we aim to bridge the gap between traditional healthcare and modern technology.</p>
+                <p>Our goal is to empower both patients and healthcare providers with tools that make healthcare management efficient and effective.</p>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="stat-item">
+                <h3>10K+</h3>
+                <p>Active Users</p>
+            </div>
+            <div class="stat-item">
+                <h3>500+</h3>
+                <p>Healthcare Partners</p>
+            </div>
+            <div class="stat-item">
+                <h3>98%</h3>
+                <p>Customer Satisfaction</p>
+            </div>
+            <div class="stat-item">
+                <h3>24/7</h3>
+                <p>Support Available</p>
+            </div>
+        </section>
+
+        <section class="team-section">
+            <h2>Our Leadership Team</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="/api/placeholder/150/150" alt="Team Member">
+                    <h3>Dr. Sarah Johnson</h3>
+                    <p>Chief Executive Officer</p>
+                    <p>20+ years in Healthcare Innovation</p>
+                </div>
+                <div class="team-member">
+                    <img src="/api/placeholder/150/150" alt="Team Member">
+                    <h3>Dr. Michael Chen</h3>
+                    <p>Chief Medical Officer</p>
+                    <p>15+ years in Digital Health</p>
+                </div>
+                <div class="team-member">
+                    <img src="/api/placeholder/150/150" alt="Team Member">
+                    <h3>Emma Williams</h3>
+                    <p>Chief Technology Officer</p>
+                    <p>12+ years in HealthTech</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 TELECARE+ Medicine Distribution System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

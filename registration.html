@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TELECARE+</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('https://img.freepik.com/free-vector/white-abstract-background_23-2148806276.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-image: linear-gradient(135deg, rgba(40, 167, 69, 0.9) 0%, rgba(32, 201, 151, 0.9) 100%);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header img {
+            position: absolute;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            height: 90px;
+            width: 90px;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            margin-left: 60px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .modern-nav {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .register-container {
+            max-width: 500px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .register-header h2 {
+            color: #28a745;
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .register-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #444;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #28a745;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .register-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .login-link a {
+            color: #28a745;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #218838;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        footer {
+            background-image: linear-gradient(135deg, rgba(52, 58, 64, 0.95) 0%, rgba(33, 37, 41, 0.95) 100%);
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .register-container {
+                margin: 2rem;
+                padding: 1.5rem;
+            }
+
+            .modern-nav {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .nav-link {
+                padding: 0.6rem 1rem;
+            }
+        }
+
+        /* Add these new validation styles */
+        .form-group.error input {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+        }
+
+        .form-group.success input {
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .role-selection {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .role-selection h3 {
+            color: #28a745;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 0 auto;
+            max-width: 600px;
+        }
+
+        .role-option {
+            background: white;
+            padding: 2rem 1rem;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .role-option:hover {
+            transform: translateY(-5px);
+            border-color: #28a745;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .role-option.selected {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        .role-option i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .role-option span {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .role-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .header-nav {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .back-link {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #28a745;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #218838;
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .back-link i {
+            font-size: 1.1rem;
+        }
+
+        .register-header h2 {
+            color: #28a745;
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            /* Center the heading while accounting for the back button space */
+            padding: 0 2rem;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo">
+        <h1>TELECARE+</h1>
+    </header>
+
+    <nav class="modern-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Features</a>
+        <a href="about as.html" class="nav-link">About Us</a>
+        <a href="#" class="nav-link">Contact</a>
+        <a href="login.php" class="nav-link">Login</a>
+        <a href="registration.html" class="nav-link">Register</a>
+    </nav>
+
+    <div class="register-container">
+        <div class="register-header">
+            <div class="header-nav">
+                <a href="javascript:history.back()" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <h2>Create Your Account</h2>
+            </div>
+            <p>Join TELECARE+ today</p>
+        </div>
+        
+        <!-- Add role selection before the form -->
+        <div class="role-selection">
+            <h3>Select Your Role</h3>
+            <div class="role-options">
+                <div class="role-option" data-role="customer">
+                    <i class="fas fa-user"></i>
+                    <a href="customer.php" class="nav-link">customer</a>
+                    </div>
+                    <div class="role-option" data-role="pharmacist">
+                        <i class="fas fa-prescription-bottle-alt"></i>
+                        <a href="pharmasicst.php" class="nav-link">Pharmacist</a>
+                    </div>
+                    
+                <div class="role-option" data-role="admin">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 TELECARE+ Medicine Distribution System.</p>
+    </footer>
+
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleOptions = document.querySelectorAll('.role-option');
+            const registerForm = document.getElementById('registerForm');
+            let selectedRole = null;
+
+            roleOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    roleOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Store selected role
+                    selectedRole = this.dataset.role;
+                    
+                    // Show the registration form
+                    registerForm.style.display = 'block';
+                    
+                    // Smooth scroll to form
+                    registerForm.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Modify the existing form submission to include the selected role
+            const form = document.getElementById('registerForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!selectedRole) {
+                    alert('Please select a role before registering');
+                    return;
+                }
+
+                // Add role to form validation
+                const isFullNameValid = validateFullName(fullname);
+                const isEmailValid = validateEmail(email);
+                const isPasswordValid = validatePassword(password);
+                const isConfirmPasswordValid = validateConfirmPassword(confirmPassword);
+                
+                
+
+                if (isFullNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid) {
+                    console.log('Form is valid, submitting with role:', selectedRole);
+                    // Add your form submission logic here
+                }
+            });
+        });
+    </script>
+</body>
+</html>

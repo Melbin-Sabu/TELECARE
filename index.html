@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Distribution System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('https://img.freepik.com/free-vector/white-abstract-background_23-2148806276.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Enhanced Header */
+        header {
+            background-image: linear-gradient(135deg, rgba(40, 167, 69, 0.9) 0%, rgba(32, 201, 151, 0.9) 100%), 
+                            url('https://img.freepik.com/free-photo/medical-banner-with-stethoscope_23-2149611199.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            
+        }
+
+        header img {
+            position: absolute;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            height: 90px;
+            width: 90px;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        header img:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-left: 60px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 1s ease;
+        }
+
+        /* Modern Navigation */
+        .modern-nav {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .auth-links {
+            display: flex;
+            gap: 1rem;
+            margin-right: 2rem;
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, 
+        .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        /* Don't apply the default active style to auth buttons */
+        .auth-btn.active {
+            background: none;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .auth-btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .highlight-secondary {
+            background: white;
+            color: #28a745;
+            border: 2px solid #28a745;
+        }
+
+        .highlight:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .highlight-secondary:hover {
+            background: #28a745;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        /* Enhanced Container */
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Improved Intro Section */
+        .intro {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.95) 0%, rgba(32, 201, 151, 0.95) 100%),
+                        url('https://img.freepik.com/free-photo/medical-banner-with-doctor-holding-stethoscope_23-2149611202.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 4rem;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .intro:hover {
+            transform: translateY(-5px);
+        }
+
+        .intro h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .intro p {
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+
+        /* Enhanced Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+        }
+
+        .feature {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.95) 100%),
+                            url('https://img.freepik.com/free-photo/medical-banner-with-doctor-stethoscope_23-2149611198.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover img {
+            transform: scale(1.05);
+        }
+
+        .feature h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #28a745;
+        }
+
+        .feature p {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Enhanced Footer */
+        footer {
+            background-image: linear-gradient(135deg, rgba(52, 58, 64, 0.95) 0%, rgba(33, 37, 41, 0.95) 100%),
+                            url('https://img.freepik.com/free-photo/medical-banner-with-doctor-stethoscope_23-2149611198.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Parallax Effect */
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        @media (max-width: 768px) {
+            .modern-nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav-links, .auth-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+                margin-right: 0;
+            }
+
+            .auth-btn {
+                padding: 0.6rem 1.2rem;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .intro {
+                padding: 2rem;
+            }
+
+            .intro h2 {
+                font-size: 2rem;
+            }
+
+            .intro p {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Hero Section Styles */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4rem 8%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%),
+                        url('https://img.freepik.com/free-photo/medical-banner-with-doctor-stethoscope_23-2149611198.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 80vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            flex: 1;
+            max-width: 600px;
+            animation: slideInLeft 1s ease;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            color: #28a745;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .primary-btn, .secondary-btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .secondary-btn {
+            background: white;
+            color: #28a745;
+            border: 2px solid #28a745;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .secondary-btn:hover {
+            background: #28a745;
+            color: white;
+        }
+
+        .hero-image {
+            flex: 1;
+            max-width: 500px;
+            animation: slideInRight 1s ease;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 968px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 3rem 5%;
+            }
+
+            .hero-content {
+                margin-bottom: 2rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-image {
+                max-width: 100%;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;800;1000;1200;1400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="parallax">
+        <img src="logo.png" alt="Logo" width="90" height="90">
+        <h1>Welcome to TELECARE+</h1>
+    </header>
+
+    <nav class="modern-nav">
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">Home</a>
+            <a href="feature.html" class="nav-link">Features</a>
+            <a href="about as.html" class="nav-link">About Us</a>
+            <a href="contact.html" class="nav-link">Contact</a>
+        </div>
+        <div class="auth-links">
+            <a href="login.php" class="nav-link auth-btn highlight-secondary">Sign In</a>
+            <a href="registration.html" class="nav-link auth-btn highlight">Register</a>
+        </div>
+    </nav>
+
+    <!-- New Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Your Health, Our Priority</h1>
+            <p>Experience seamless healthcare delivery with TELECARE+. We bring quality medical care right to your doorstep.</p>
+            <div class="hero-buttons">
+                <a href="registration.html" class="primary-btn">Get Started</a>
+                <a href="#features" class="secondary-btn">Learn More</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="img4.avif" alt="Healthcare Professional">
+        </div>
+    </section>
+
+    <div class="container">
+        <section class="intro parallax">
+            <h2>Transforming Healthcare Delivery</h2>
+            <p>Experience the future of healthcare with our innovative system that ensures seamless medication delivery, 
+            comprehensive health monitoring, and round-the-clock support for patients and caregivers.</p>
+        </section>
+
+        <section class="features">
+            <div class="feature">
+                <img src="img1.avif" alt="Health Monitoring">
+                <h3>Remote Health Monitoring</h3>
+                <p>Track vital signs and health data using integrated smart medical devices. Stay connected with your healthcare providers 24/7.</p>
+            </div>
+            <div class="feature">
+                <img src="img2.avif" alt="Medication Delivery">
+                <h3>Medication Procurement</h3>
+                <p>Order medications online with ease and get them delivered to your doorstep. Never miss a dose with our timely delivery system.</p>
+            </div>
+            <div class="feature">
+                <img src="img3.avif" alt="Alerts">
+                <h3>Proactive Alerts</h3>
+                <p>Receive notifications for irregular health parameters and upcoming tests. Stay ahead of your health needs with smart alerts.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer class="parallax">
+        <p>&copy; 2025 TELECARE+ Medicine Distribution System.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all navigation links
+            const navLinks = document.querySelectorAll('.nav-links .nav-link');
+            
+            // Add click event listener to each link
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Remove active class from all links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                });
+            });
+
+            // Set active class based on current page
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

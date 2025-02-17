@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - TELECARE+</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('https://img.freepik.com/free-vector/white-abstract-background_23-2148806276.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-image: linear-gradient(135deg, rgba(40, 167, 69, 0.9) 0%, rgba(32, 201, 151, 0.9) 100%);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header img {
+            position: absolute;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            height: 90px;
+            width: 90px;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            margin-left: 60px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .modern-nav {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .feature-card h3 {
+            color: #28a745;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .feature-details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #28a745;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-highlight {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .feature-highlight h2 {
+            color: #28a745;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-highlight p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        footer {
+            background-image: linear-gradient(135deg, rgba(52, 58, 64, 0.95) 0%, rgba(33, 37, 41, 0.95) 100%);
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .modern-nav {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .nav-link {
+                padding: 0.6rem 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .feature-highlight {
+                padding: 2rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo">
+        <h1>Features</h1>
+    </header>
+
+    <nav class="modern-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about as.html" class="nav-link">About Us</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="login.php" class="nav-link">Login</a>
+        <a href="registration.html" class="nav-link">Register</a>
+    </nav>
+
+    <div class="container">
+        <div class="feature-highlight">
+            <h2>Revolutionizing Healthcare Delivery</h2>
+            <p>Discover how TELECARE+ is transforming the healthcare industry with innovative solutions and cutting-edge technology.</p>
+        </div>
+
+        <h2 class="section-title">Our Key Features</h2>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Mobile Health Monitoring</h3>
+                <p>Track your vital signs and health metrics in real-time through our user-friendly mobile application.</p>
+                <div class="feature-details">
+                    Includes heart rate, blood pressure, and glucose monitoring
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💊</div>
+                <h3>Smart Medication Management</h3>
+                <p>Automated medication reminders and intelligent dosage tracking system to ensure medication adherence.</p>
+                <div class="feature-details">
+                    Customizable schedules and dosage alerts
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🚚</div>
+                <h3>Quick Medicine Delivery</h3>
+                <p>Fast and reliable delivery of prescribed medications right to your doorstep.</p>
+                <div class="feature-details">
+                    Same-day delivery available in select areas
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">👨‍⚕️</div>
+                <h3>24/7 Healthcare Support</h3>
+                <p>Round-the-clock access to healthcare professionals for immediate assistance and consultation.</p>
+                <div class="feature-details">
+                    Video consultations and emergency support
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Health Analytics</h3>
+                <p>Comprehensive health data analysis and personalized insights for better health management.</p>
+                <div class="feature-details">
+                    Trend analysis and health predictions
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure Health Records</h3>
+                <p>Advanced encryption and secure storage of all your medical records and health information.</p>
+                <div class="feature-details">
+                    HIPAA compliant data protection
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 TELECARE+ Medicine Distribution System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

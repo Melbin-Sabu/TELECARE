@@ -1,0 +1,100 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    /* High quality abstract medical background */
+    background-image: url('https://img.freepik.com/premium-photo/medical-healthcare-background-with-polygonal-lines-shapes_87788-2062.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Enhanced Header with sharper background */
+header {
+    background-image: linear-gradient(135deg, rgba(40, 167, 69, 0.85) 0%, rgba(32, 201, 151, 0.85) 100%), 
+                    url('https://img.freepik.com/premium-photo/medical-background-with-hexagons-healthcare-icons_87788-2076.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Increased clarity */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* Improved Intro Section with higher resolution background */
+.intro {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.90) 0%, rgba(32, 201, 151, 0.90) 100%),
+                url('https://img.freepik.com/premium-photo/abstract-medical-background-with-healthcare-icons_87788-2064.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Enhanced image quality */
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Feature cards with clearer backgrounds */
+.feature {
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.97) 100%),
+                    url('https://img.freepik.com/premium-photo/medical-healthcare-background-with-hexagons-pattern_87788-2072.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Improved image sharpness */
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Footer with enhanced background */
+footer {
+    background-image: linear-gradient(135deg, rgba(52, 58, 64, 0.97) 0%, rgba(33, 37, 41, 0.97) 100%),
+                    url('https://img.freepik.com/premium-photo/medical-healthcare-background-with-flat-icons-symbols_87788-2098.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Better image rendering */
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Added support for high-resolution displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    body, header, .intro, .feature, footer {
+        background-size: cover;
+        image-rendering: auto;
+    }
+}
+
+/* Enhanced container transparency */
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Better feature image handling */
+.feature img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+    /* Enhanced image quality */
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Added smooth scrolling for better parallax effect */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Optimized parallax effect */
+.parallax {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
