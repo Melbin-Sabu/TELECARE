@@ -19,3 +19,71 @@ CREATE TABLE pharmacists (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id) REFERENCES signup(id)
 );
+
+/* previous codeCREATE TABLE Medicines (
+    medicine_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    batch_number VARCHAR(50) NOT NULL UNIQUE,
+    expiry_date DATE NOT NULL,
+    stock_quantity INT NOT NULL CHECK (stock_quantity >= 0),
+    price_per_unit DECIMAL(10,2) NOT NULL CHECK (price_per_unit > 0),
+    company VARCHAR(100) NOT NULL
+);*/
+CREATE TABLE medicines (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    category VARCHAR(100),
+    price DECIMAL(10,2),
+    quantity INT,
+    expiry_date DATE,
+    manufacturer VARCHAR(255)
+);
+
+Health Records Table
+CREATE TABLE health_records (
+    record_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    blood_pressure VARCHAR(10), -- Example: '120/80'
+    heart_rate INT, -- Beats per minute
+    temperature DECIMAL(4,1), -- Example: 37.2°C
+    oxygen_level INT, -- Percentage
+    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+//table medi
+CREATE TABLE medi (
+    medicine_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    batch_number VARCHAR(50) NOT NULL UNIQUE,
+    expiry_date DATE NOT NULL,
+    stock_quantity INT DEFAULT 0,
+    price_per_unit DECIMAL(10, 2) NOT NULL,
+    company VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE prescriptions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    file_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    file_type VARCHAR(50) NOT NULL,
+    file_size INT NOT NULL,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    FOREIGN KEY (user_id) REFERENCES signup(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE vital_signs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    blood_sugar DECIMAL(5,2), -- Example: 120.5
+    blood_pressure_systolic INT, -- Example: 120
+    blood_pressure_diastolic INT, -- Example: 80
+    oxygen_level INT, -- Example: 98 (percentage)
+    heart_rate INT, -- Example: 75 BPM
+    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES signup(id) ON DELETE CASCADE
+);
+

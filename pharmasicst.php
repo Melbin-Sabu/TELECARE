@@ -2,7 +2,7 @@
 session_start();
 // Start the session at the very top of the file, before any HTML
 
-$role = "Pharmasist";  // Assuming the user role is customer. Modify if needed.
+$role = "Pharmacist";  // Assuming the user role is customer. Modify if needed.
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get form data

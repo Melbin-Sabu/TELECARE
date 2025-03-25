@@ -67,6 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     if ($stmt->execute()) {
                         $success_message = "Registration successful!";
+                        header('Location:pharmasistdash.php');
                     } else {
                         $error_message = "Error: " . $stmt->error;
                         // echo $_SESSION['user_id'];

@@ -1,4 +1,22 @@
+<?php
+session_start();
+$conn = new mysqli('localhost', 'root', '', 'telecare+');
 
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+if (!isset($_SESSION['user_id'])) {
+  header("Location: login.php");
+  exit();
+}
+
+$sql = "SELECT * FROM pharmacists WHERE id='" . $_SESSION['user_id'] . "'";
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows <1) {
+  header('Location:pharinnerdash.php');    
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,7 +159,7 @@
         <i class="fa-solid fa-user-injured"></i>
         <h3>View Prescriptions</h3>
         <p>Check and verify customer prescriptions before dispensing.</p>
-        <a href="#">View Now</a>
+        <a href="viewprescription.php">View Now</a>
       </div>
       <div class="service-card">
         <i class="fa-solid fa-truck-medical"></i>
@@ -153,6 +171,3 @@
   </div>
 </body>
 </html>
-
-
- 

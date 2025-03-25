@@ -1,5 +1,6 @@
 <?php
 session_start(); 
+$role=$_SESSION['role'];
 $error_message = '';
 $conn = new mysqli('localhost', 'root', '', 'telecare+');
 
@@ -63,7 +64,7 @@ elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['verify'])) {
         $password = password_hash($_SESSION['password'], PASSWORD_DEFAULT);
         $address = $conn->real_escape_string($_SESSION['address']);
         $place = $conn->real_escape_string($_SESSION['place']);
-        $role = $conn->real_escape_string($_SESSION['role']);
+       // $role = $_SESSION['role'];
 
         $sql = "INSERT INTO signup (full_name, email, password, permanent_address, place, role) 
                 VALUES ('$fullname', '$email', '$password', '$address', '$place', '$role')";

@@ -30,9 +30,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['role'] = $user['role']; // Store role in session
 
                 // Redirect based on role
-                if ($user['role'] === 'Pharmasist') {
-                    header('Location:pharinnerdash.php'); // Redirect to Pharmacist Dashboard
-                } else {
+                if ($user['role'] === 'pharmacist') {
+                    header('Location:pharmasistdash.php');
+                     // Redirect to Pharmacist Dashboard
+                } 
+                 // Redirect based on role
+                 else if ($user['role'] === 'admin') {
+                    header('Location:admindash.php');
+                     // Redirect to Pharmacist Dashboard
+        
+                } 
+                else {
                     header('Location: customerdash.php'); // Redirect to Customer Dashboard
                 }
                 exit();
