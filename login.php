@@ -1,58 +1,75 @@
 <?php
-session_start();
+session_start([
+    'cookie_httponly' => true,
+    'cookie_secure' => true
+]);
 $error_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Create database connection
-    $conn = new mysqli('localhost', 'root', '', 'telecare+');
-
-    // Check for connection error
-    if ($conn->connect_error) {
-        error_log("Connection failed: " . $conn->connect_error);
-        $error_message = "An error occurred during login. Please try again later.";
-    } else {
-        // Sanitize user inputs
-        $email = $conn->real_escape_string(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL));
-        $password = $_POST['password'];
-
-        // Query to fetch user data
-        $sql = "SELECT * FROM signup WHERE email='$email'";
-        $result = $conn->query($sql);
-
-        if ($result && $result->num_rows === 1) {
-            $user = $result->fetch_assoc();
-
-            // Verify password
-            if (password_verify($password, $user['password'])) {
-                // Start session and set user ID & role in session
-                session_regenerate_id();
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['role'] = $user['role']; // Store role in session
-
-                // Redirect based on role
-                if ($user['role'] === 'pharmacist') {
-                    header('Location:pharmasistdash.php');
-                     // Redirect to Pharmacist Dashboard
-                } 
-                 // Redirect based on role
-                 else if ($user['role'] === 'admin') {
-                    header('Location:admindash.php');
-                     // Redirect to Pharmacist Dashboard
+    try {
+        $conn = new mysqli('localhost', 'root', '', 'telecare+');
         
-                } 
-                else {
-                    header('Location: customerdash.php'); // Redirect to Customer Dashboard
-                }
-                exit();
-            } else {
-                $error_message = "Invalid email or password.";
-            }
-        } else {
-            $error_message = "Invalid email or password.";
+        if ($conn->connect_error) {
+            throw new Exception("Connection failed: " . $conn->connect_error);
         }
 
-        // Close the database connection
+        $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        $password = $_POST['password'];
+
+        // Check users table
+        $stmt = $conn->prepare("SELECT * FROM signup WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            $user = $result->fetch_assoc();
+            
+            if (password_verify($password, $user['password'])) {
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['role'] = $user['role'];
+
+                switch ($user['role']) {
+                    case 'pharmacist':
+                        header('Location: pharmasistdash.php');
+                        break;
+                    case 'admin':
+                        header('Location: admindash.php');
+                        break;
+                    default:
+                        header('Location: customerdash.php');
+                }
+                $conn->close();
+                exit();
+            }
+        }
+
+        // Check doctors table
+        $stmt = $conn->prepare("SELECT * FROM doctors WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            $doctor = $result->fetch_assoc();
+            if (password_verify($password, $doctor['password'])) {
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = $doctor['id'];
+                $_SESSION['role'] = 'doctor';
+                $_SESSION['doctor_id'] = $doctor['id'];//added this line only
+                header('Location: docdash.php');
+                $conn->close();
+                exit();
+            }
+        }
+
+        $error_message = "Invalid email or password.";
         $conn->close();
+
+    } catch (Exception $e) {
+        error_log("Login error: " . $e->getMessage());
+        $error_message = "An error occurred during login. Please try again later.";
     }
 }
 ?>

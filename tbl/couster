@@ -87,3 +87,24 @@ CREATE TABLE vital_signs (
     FOREIGN KEY (user_id) REFERENCES signup(id) ON DELETE CASCADE
 );
 
+/*CREATE TABLE consultations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,  -- Foreign key referencing `signup.id`
+    doctor_email VARCHAR(255) NOT NULL,
+    health_data TEXT NOT NULL,
+    meet_link VARCHAR(255),
+    status ENUM('pending', 'assigned', 'completed') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES signup(id) ON DELETE CASCADE
+) ENGINE=InnoDB;*/
+CREATE TABLE `consultations` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,  -- References `signup(id)` (customer)
+    `doctor_id` INT NOT NULL,  -- Should reference `doctors(id)`, not `signup(id)`
+    `health_data` TEXT NOT NULL,
+    `meet_link` VARCHAR(255),
+    `status` ENUM('pending', 'assigned', 'completed') DEFAULT 'pending',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `signup`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`doctor_id`) REFERENCES `doctors`(`id`) ON DELETE CASCADE  -- Fix reference to `doctors`
+) ENGINE=InnoDB;
