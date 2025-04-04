@@ -1,5 +1,5 @@
 <?php
-// Database connection
+session_start();
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -10,13 +10,25 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1;
+
+// Handle cart addition
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_cart'])) {
+    $medicine_id = $_POST['medicine_id'];
+    $sql = "INSERT INTO cart (user_id, medicine_id) VALUES (?, ?)
+            ON DUPLICATE KEY UPDATE quantity = quantity + 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $user_id, $medicine_id);
+    $stmt->execute();
+    $stmt->close();
+}
+
 // Handle search
 $search_term = "";
 $search_results = [];
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search'])) {
     $search_term = trim($_GET['search']);
     $sql = "SELECT * FROM medicines WHERE name LIKE ? OR price LIKE ? OR company LIKE ? ORDER BY name";
-
     $stmt = $conn->prepare($sql);
     $search_param = "%" . $search_term . "%";
     $stmt->bind_param("sss", $search_param, $search_param, $search_param);
@@ -88,25 +100,22 @@ $conn->close();
     </style>
 </head>
 <body class="bg-gray-100">
-
-    <!-- Sidebar -->
     <div class="sidebar">
         <h2 class="text-xl font-bold text-white">TELECARE+</h2>
         <a href="#">📤 Upload Prescription</a>
         <a href="healthmonito.php">📊 Health Monitoring</a>
         <a href="ordermedi.php">🛒 Order Medicines</a>
+        <a href="cart.php">🛍 Cart</a>
         <a href="logout.php">Logout</a>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <h1 class="text-3xl font-bold text-gray-800 mb-4">Search Medicines</h1>
 
         <form method="GET" class="mb-6 relative">
             <input type="text" id="search-box" name="search" value="<?php echo htmlspecialchars($search_term); ?>" 
-                placeholder="Enter medicine name, batch number, or company" 
+                placeholder="Enter medicine name, price, or company" 
                 class="w-full px-4 py-2 border rounded bg-green-100 focus:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500">
-
             <div id="autocomplete-results" class="autocomplete-suggestions hidden"></div>
             <button type="submit" 
                 class="mt-2 bg-green-400 text-white px-6 py-2 rounded hover:bg-green-500">
@@ -117,36 +126,33 @@ $conn->close();
         <?php if (!empty($search_results)): ?>
             <div class="result-container p-6 bg-white rounded-lg shadow-md">
                 <h2 class="text-xl font-bold text-green-700 mb-4">Search Results for "<?php echo htmlspecialchars($search_term); ?>"</h2>
-                <div class="overflow-x-auto">
                 <table class="w-full border-collapse">
-    <thead>
-        <tr class="bg-gray-50 border-b">
-            <th class="px-4 py-2 text-left">Medicine Name</th>
-            <th class="px-4 py-2 text-left">Expiry Date</th>
-            <th class="px-4 py-2 text-left">Price</th>
-            <th class="px-4 py-2 text-center">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($search_results as $row): ?>
-            <tr class="border-t hover:bg-green-50">
-                <td class="px-4 py-2"><?php echo htmlspecialchars($row['name']); ?></td>
-                <td class="px-4 py-2"><?php echo htmlspecialchars($row['expiry_date']); ?></td>
-                <td class="px-4 py-2">$<?php echo number_format($row['price'], 2); ?></td>
-                <td class="px-4 py-2 text-center">
-                    <form method="POST" action="#">
-                        <input type="hidden" name="medicine_id" value="<?php echo $row['id']; ?>">
-                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                            Buy
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
-
-                </div>
+                    <thead>
+                        <tr class="bg-gray-50 border-b">
+                            <th class="px-4 py-2 text-left">Medicine Name</th>
+                            <th class="px-4 py-2 text-left">Expiry Date</th>
+                            <th class="px-4 py-2 text-left">Price</th>
+                            <th class="px-4 py-2 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($search_results as $row): ?>
+                            <tr class="border-t hover:bg-green-50">
+                                <td class="px-4 py-2"><?php echo htmlspecialchars($row['name']); ?></td>
+                                <td class="px-4 py-2"><?php echo htmlspecialchars($row['expiry_date']); ?></td>
+                                <td class="px-4 py-2">$<?php echo number_format($row['price'], 2); ?></td>
+                                <td class="px-4 py-2 text-center">
+                                    <form method="POST">
+                                        <input type="hidden" name="medicine_id" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" name="add_to_cart" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         <?php elseif ($search_term !== ""): ?>
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -174,7 +180,7 @@ $conn->close();
                                 suggestionBox.append("<div class='autocomplete-suggestion'>No matches found</div>");
                             } else {
                                 results.forEach(item => {
-                                    let suggestion = `<div class='autocomplete-suggestion' data-value='${item.name}'>${item.name}</div>`;
+                                    let suggestion = <div class='autocomplete-suggestion' data-value='${item.name}'>${item.name}</div>;
                                     suggestionBox.append(suggestion);
                                 });
                             }
@@ -182,7 +188,11 @@ $conn->close();
                             $(".autocomplete-suggestion").on("click", function() {
                                 $("#search-box").val($(this).data("value"));
                                 suggestionBox.addClass("hidden");
+                                $("#search-box").closest("form").submit(); // Submit form when suggestion clicked
                             });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Autocomplete error:", error);
                         }
                     });
                 } else {
@@ -191,6 +201,5 @@ $conn->close();
             });
         });
     </script>
-
 </body>
 </html>

@@ -6,22 +6,22 @@ $dbname = "telecare+";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
-    die(json_encode([])); // Return empty JSON on connection failure
+    die("Connection failed: " . $conn->connect_error);
 }
 
-$search = $_GET['search'] ?? '';
-if (!empty($search)) {
-    $stmt = $conn->prepare("SELECT name FROM Medicines WHERE name LIKE ? ORDER BY name LIMIT 5");
-    $search_param = "%" . $search . "%";
+if (isset($_GET['search'])) {
+    $search_term = trim($_GET['search']);
+    $sql = "SELECT name FROM medicines WHERE name LIKE ? ORDER BY name LIMIT 5";
+    $stmt = $conn->prepare($sql);
+    $search_param = "%" . $search_term . "%";
     $stmt->bind_param("s", $search_param);
     $stmt->execute();
     $result = $stmt->get_result();
-    $medicines = $result->fetch_all(MYSQLI_ASSOC);
+    $suggestions = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
-} else {
-    $medicines = [];
+    
+    echo json_encode($suggestions);
 }
 
 $conn->close();
-echo json_encode($medicines);
 ?>

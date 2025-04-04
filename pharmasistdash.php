@@ -163,9 +163,9 @@ if ($result && $result->num_rows <1) {
       </div>
       <div class="service-card">
         <i class="fa-solid fa-truck-medical"></i>
-        <h3>Process Orders</h3>
-        <p>Handle and manage medicine orders efficiently.</p>
-        <a href="#">Process Now</a>
+        <h3>chat with Customer</h3>
+        <p>Chat with customer efficiently.</p>
+        <a href="pharmacist_messages.php">chat with Customer</a>
       </div>
     </div>
   </div>
