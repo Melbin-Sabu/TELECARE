@@ -65,6 +65,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         $error_message = "Invalid email or password.";
+
+        // Check delivery boy table
+        $stmt = $conn->prepare("SELECT * FROM delivery_boys WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            $deliveryBoy = $result->fetch_assoc();
+            if (password_verify($password, $deliveryBoy['password'])) {
+                session_regenerate_id(true);
+                $_SESSION['delivery_boy_id'] = $deliveryBoy['id'];
+                header('Location: deliverydash.php');
+                $conn->close();
+                exit();
+            }
+        }
+
+        $error_message = "Invalid email or password.";
         $conn->close();
 
     } catch (Exception $e) {

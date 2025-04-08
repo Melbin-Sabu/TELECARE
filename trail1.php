@@ -1,13 +1,17 @@
 <?php
 session_start();
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
+// Enable error reporting for debugging (remove in production)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Check if user is logged in and is a customer
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'customer') {
     header("Location: index.html");
     exit();
 }
 
-// Database connection
 $host = 'localhost';
 $user = 'root';
 $password = '';
@@ -19,56 +23,68 @@ if ($conn->connect_error) {
 }
 
 $user_id = $_SESSION['user_id'];
-$prescriptions = [];
-$upload_message = "";
+$upload_message = isset($_SESSION['upload_message']) ? $_SESSION['upload_message'] : "";
+unset($_SESSION['upload_message']); // Clear message after displaying
+
+// Ensure upload directory exists
+$upload_dir = 'uploads/prescriptions/';
+if (!file_exists($upload_dir)) {
+    mkdir($upload_dir, 0777, true);
+}
 
 // Handle file upload
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['prescription'])) {
-    $file_name = basename($_FILES["prescription"]["name"]);
-    
-    // Check if this file was already uploaded by the user in the database
-    $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM prescriptions WHERE user_id = ? AND file_name = ?");
-    $check_stmt->bind_param("is", $user_id, $file_name);
-    $check_stmt->execute();
-    $result = $check_stmt->get_result();
-    $row = $result->fetch_assoc();
+    $file = $_FILES['prescription'];
+    $file_name = basename($file['name']);
+    $file_type = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    $file_size = $file['size'];
+    $allowed_types = ['jpg', 'jpeg', 'png', 'pdf'];
 
-    if ($row['count'] > 0) {
-        $upload_message = '<div class="alert alert-error">This prescription already exists in the database!</div>';
+    if (!in_array($file_type, $allowed_types)) {
+        $_SESSION['upload_message'] = "Invalid file type. Allowed types: JPG, PNG, PDF.";
+    } elseif ($file_size > 5000000) { // 5MB limit
+        $_SESSION['upload_message'] = "File size exceeds 5MB.";
     } else {
-        $target_dir = "uploads/prescriptions/";
-        if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0777, true);
-        }
+        $unique_name = time() . "" . uniqid() . "" . $file_name;
+        $file_path = $upload_dir . $unique_name;
 
-        $file_path = $target_dir . time() . "_" . uniqid() . "_" . $file_name;
-
-        if (move_uploaded_file($_FILES["prescription"]["tmp_name"], $file_path)) {
-            $stmt = $conn->prepare("INSERT INTO prescriptions (user_id, file_name, file_path, uploaded_at, status) VALUES (?, ?, ?, NOW(), ?)");
-            $status = "Pending";
-            $stmt->bind_param("isss", $user_id, $file_name, $file_path, $status);
-            
-            if ($stmt->execute()) {
-                $upload_message = '<div class="alert alert-success">Prescription uploaded successfully!</div>';
+        if (move_uploaded_file($file['tmp_name'], $file_path)) {
+            $stmt = $conn->prepare("INSERT INTO prescriptions (user_id, file_name, file_path, file_type, file_size, uploaded_at, status) 
+                                    VALUES (?, ?, ?, ?, ?, NOW(), 'Pending')");
+            if ($stmt) {
+                $stmt->bind_param("isssi", $user_id, $file_name, $file_path, $file_type, $file_size);
+                if ($stmt->execute()) {
+                    $_SESSION['upload_message'] = "Prescription uploaded successfully!";
+                } else {
+                    $_SESSION['upload_message'] = "Database error: " . $stmt->error;
+                }
+                $stmt->close();
             } else {
-                $upload_message = '<div class="alert alert-error">Database error: ' . $stmt->error . '</div>';
+                $_SESSION['upload_message'] = "Prepare statement failed: " . $conn->error;
             }
-            $stmt->close();
         } else {
-            $upload_message = '<div class="alert alert-error">Error uploading file.</div>';
+            $_SESSION['upload_message'] = "Error uploading file. Check directory permissions.";
         }
     }
-    $check_stmt->close();
+    // Redirect to prevent resubmission
+    header("Location: trail1.php");
+    exit();
 }
 
 // Fetch user's prescriptions
-$stmt = $conn->prepare("SELECT file_name, file_path, uploaded_at, status FROM prescriptions WHERE user_id = ? ORDER BY uploaded_at DESC");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$prescriptions = $result->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
-$conn->close();
+$query = "SELECT id, file_name, file_path, uploaded_at, status 
+          FROM prescriptions 
+          WHERE user_id = ? 
+          ORDER BY uploaded_at DESC";
+$stmt = $conn->prepare($query);
+if ($stmt) {
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+} else {
+    die("Query prepare failed: " . $conn->error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -76,290 +92,133 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - TELECARE+</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Upload Prescription - Telecare+</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            margin: 0;
-            background: #f0f2f5;
-            color: #333;
-            min-height: 100vh;
-        }
-
-        /* Updated Sidebar Styles */
         .sidebar {
-            width: 280px;
-            background: rgb(14, 232, 72);
-            padding: 30px;
+            width: 250px;
+            background: linear-gradient(180deg, #4CAF50 0%, #2E7D32 100%);
             height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-        }
-
-        .sidebar h2 {
-            color: white;
-            font-size: 32px;
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar ul li {
-            margin-bottom: 20px;
-        }
-
-        .sidebar ul li a {
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            padding: 15px 20px;
-            display: block;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar ul li a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(10px);
-        }
-
-        /* Updated Main Content Styles */
-        .container {
-            margin-left: 300px;
-            width: calc(100% - 340px);
-            padding: 40px;
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            margin-top: 20px;
-            margin-right: 20px;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            font-size: 32px;
-            margin-bottom: 30px;
-            color: rgb(14, 232, 72);
-        }
-
-        .upload-box {
-            border: 2px dashed rgb(14, 232, 72);
-            padding: 40px;
-            text-align: center;
-            border-radius: 15px;
-            margin-bottom: 40px;
-            background: rgba(14, 232, 72, 0.05);
-        }
-
-        .upload-box input[type="file"] {
-            display: block;
-            margin: 20px auto;
-            padding: 10px;
-            font-size: 16px;
-        }
-
-        .upload-box button {
-            padding: 15px 30px;
-            border: none;
-            cursor: pointer;
-            background: rgb(14, 232, 72);
-            color: white;
-            border-radius: 8px;
-            font-size: 18px;
-            transition: 0.3s;
-            font-weight: 500;
-        }
-
-        .upload-box button:hover {
-            background: rgba(14, 232, 72, 0.8);
-            transform: translateY(-2px);
-        }
-
-        .prescription-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .prescription-list li {
             padding: 20px;
-            border-bottom: 1px solid rgba(14, 232, 72, 0.2);
+            color: white;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .sidebar a {
+            display: flex;
             align-items: center;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .prescription-list li:hover {
-            background: rgba(14, 232, 72, 0.05);
-            transform: translateX(10px);
-        }
-
-        .prescription-list a {
-            text-decoration: none;
-            color: rgb(14, 232, 72);
-            font-weight: 500;
-        }
-
-        .status {
-            padding: 10px 20px;
+            padding: 10px;
+            background: white;
+            color: #4CAF50;
+            font-weight: bold;
             border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
+            transition: 0.3s;
         }
-
-        .status.pending {
-            background: #fff3cd;
-            color: #856404;
+        .sidebar a:hover {
+            background: #388E3C;
+            color: white;
         }
-
-        .status.verified {
-            background: rgba(14, 232, 72, 0.1);
-            color: rgb(14, 232, 72);
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
         }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
+        .message {
             margin-bottom: 20px;
-            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
         }
-
-        .alert-success {
-            background: rgba(14, 232, 72, 0.1);
-            color: rgb(14, 232, 72);
-            border: 1px solid rgb(14, 232, 72);
-        }
-
-        .alert-error {
-            background: #ffe0e0;
-            color: #dc3545;
-            border: 1px solid #dc3545;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .container {
-                margin-left: 290px;
-                width: calc(100% - 310px);
-                padding: 30px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 80px;
-                padding: 20px 10px;
-            }
-
-            .sidebar h2 {
-                font-size: 20px;
-            }
-
-            .sidebar ul li a {
-                padding: 10px;
-                font-size: 16px;
-            }
-
-            .container {
-                margin-left: 90px;
-                width: calc(100% - 110px);
-                padding: 20px;
-            }
-        }
-
-        /* Add these to your existing styles */
-        .prescription-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #dc3545;
-            cursor: pointer;
-            padding: 5px 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            opacity: 0.7;
-        }
-
-        .delete-btn:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        .prescription-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .success { background-color: #D4EDDA; color: #155724; }
+        .error { background-color: #F8D7DA; color: #721C24; }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <h2>TELECARE+</h2>
-        <ul>
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Prescriptions</a></li>
-            <li><a href="#">Orders</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="logout.php">Logout</a></li>
-        </ul>
+        <h2 class="text-xl font-bold text-white">TELECARE+</h2>
+        <a href="trail1.php"><i class="fas fa-upload mr-2"></i> Upload Prescription</a>
+        <a href="healthmonito.php"><i class="fas fa-chart-line mr-2"></i> Health Monitoring</a>
+        <a href="ordermedi.php"><i class="fas fa-shopping-cart mr-2"></i> Order Medicines</a>
+        <a href="cart.php"><i class="fas fa-shopping-bag mr-2"></i> Cart</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
     </div>
-    
-    <div class="container">
-        <h2>Your Prescriptions</h2>
+
+    <div class="main-content">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Upload Prescription</h1>
+
         <?php if ($upload_message): ?>
-            <?php echo $upload_message; ?>
+            <div class="message <?php echo strpos($upload_message, 'success') !== false ? 'success' : 'error'; ?>">
+                <?php echo $upload_message; ?>
+            </div>
         <?php endif; ?>
-        <div class="upload-box">
-            <form action="" method="post" enctype="multipart/form-data">
-                <input type="file" name="prescription" required>
-                <br><br>
-                <button type="submit">Upload Prescription</button>
+
+        <!-- Upload Form -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <form method="POST" enctype="multipart/form-data">
+                <label class="block text-gray-700 mb-2" for="prescription">Upload Prescription (JPG, PNG, PDF, max 5MB):</label>
+                <input type="file" name="prescription" id="prescription" accept=".jpg,.jpeg,.png,.pdf" 
+                       class="w-full px-3 py-2 border rounded-lg" required>
+                <button type="submit" 
+                        class="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
+                    Upload
+                </button>
             </form>
         </div>
-        <div>
-            <?php if (!empty($prescriptions)): ?>
-                <ul class="prescription-list">
-                    <?php foreach ($prescriptions as $prescription): ?>
-                        <li>
-                            <div class="prescription-info">
-                                <a href="<?php echo htmlspecialchars($prescription['file_path']); ?>" target="_blank">
-                                    <?php echo htmlspecialchars($prescription['file_name']); ?>
-                                </a>
-                            </div>
-                            <div class="prescription-actions">
-                                <span class="status <?php echo strtolower($prescription['status']); ?>">
-                                    <?php echo $prescription['status']; ?>
-                                </span>
-                                <form method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this prescription?');">
-                                    <input type="hidden" name="delete_prescription" value="<?php echo htmlspecialchars($prescription['file_path']); ?>">
-                                    <button type="submit" class="delete-btn">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p>No prescriptions uploaded yet.</p>
-            <?php endif; ?>
-        </div>
+
+        <!-- Prescription List -->
+        <?php if (!empty($prescriptions)): ?>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Your Prescriptions</h2>
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b">
+                            <th class="px-4 py-2 text-left">File Name</th>
+                            <th class="px-4 py-2 text-left">Uploaded Date</th>
+                            <th class="px-4 py-2 text-left">Status</th>
+                            <th class="px-4 py-2 text-left">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($prescriptions as $prescription): ?>
+                            <tr class="border-t hover:bg-green-50">
+                                <td class="px-4 py-2"><?php echo htmlspecialchars($prescription['file_name']); ?></td>
+                                <td class="px-4 py-2"><?php echo date('M d, Y', strtotime($prescription['uploaded_at'])); ?></td>
+                                <td class="px-4 py-2">
+                                    <span class="px-3 py-1 rounded-full text-sm <?php 
+                                        echo $prescription['status'] == 'Pending' ? 'bg-yellow-100 text-yellow-700' : 
+                                            ($prescription['status'] == 'Verified' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'); ?>">
+                                        <?php echo htmlspecialchars($prescription['status']); ?>
+                                    </span>
+                                </td>
+                                <td class="px-4 py-2">
+                                    <a href="<?php echo htmlspecialchars($prescription['file_path']); ?>" 
+                                       target="_blank" class="text-blue-500 hover:text-blue-700">
+                                        <i class="fas fa-eye mr-2"></i>View
+                                    </a>
+                                    <?php if ($prescription['status'] == 'Verified'): ?>
+                                        <a href="cart.php" class="ml-4 text-green-500 hover:text-green-700">
+                                            <i class="fas fa-shopping-cart mr-2"></i>Go to Cart
+                                        </a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
+                <strong class="font-bold">No Prescriptions!</strong>
+                <span class="block sm:inline"> You haven’t uploaded any prescriptions yet.</span>
+            </div>
+        <?php endif; ?>
     </div>
 </body>
 </html>
+
+<?php $conn->close(); ?>
